@@ -1,0 +1,63 @@
+server: 
+  port: 7887
+spring: 
+    http: 
+    encoding: 
+    force: true
+    datasource:
+      url: jdbc:mysql://172.30.195.126:3306/migucurrency?useUnicode=true&characterEncoding=UTF-8&connectTimeout=30000&socketTimeout=60000
+      username: migucurrency
+      password: Oa69t7u$AJi6&UbE
+      maxActive: 100
+      maxIdle: 30
+      maxWait: 500
+    profiles: miguonline
+    jackson: 
+      date-format: "yyyyMMdd HH:mm:ss"
+management: 
+  security: 
+    enabled: false
+logging:  
+  level: 
+    root: info
+    com:
+      cmcc:
+        mgr:
+          biz: error 
+          dao: error
+          controller: error
+  path: /data_log/Timer1/logs
+data: 
+  path: /data_log/Timer1/Data
+threadPool: 
+  corePoolSize: 100
+  maximumPoolSize: 200
+  keepAliveTime: 30
+reloadBeforeSeconds: 7200
+failedRetryTimes: 30,3600
+deFreezeUrl: http://172.30.196.74:8080/MiGuMgr/rs/service/com_sitech_acctmgr_inter_IUserSvc_timerDeFreeze
+redis:  
+  cluster:  
+    nodes:  
+      - 172.30.195.156:6379
+      - 172.30.195.157:6379
+      - 172.30.195.158:6379
+      - 172.30.195.161:6379
+      - 172.30.195.162:6379
+      - 172.30.195.163:6379
+      - 172.30.195.164:6379
+      - 172.30.195.166:6379
+      - 172.30.195.167:6379
+      - 172.30.195.168:6379
+  password: pPe+v85sO9c=
+redoFileSize: 524288000 ##redo文件多大滚动一次，这里设置的是500M
+registry.servers: 172.30.198.57:9501,172.30.198.51:9501,172.30.198.45:9501,172.30.198.25:9501,172.30.198.18:9501
+registry.root.path: /timer
+slave: 
+  server: 
+    port: 9960
+deploy: 
+  type: 1## 0表示单机集群 1 表示主备集群
+virtualIp: ##172.28.11.252
+monitorPath: 
+  /monitor

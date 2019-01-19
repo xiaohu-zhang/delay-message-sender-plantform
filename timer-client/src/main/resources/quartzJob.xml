@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Application context definition. -->
+<!-- Application context definition. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/jdbc
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+	http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd ">
+	
+
+
+	
+	<!-- =====================日常任务job========================== -->
+	<bean id="sendToSlave"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="scheduleService" />
+		</property>
+		<property name="targetMethod">
+			<value>sendToSlave</value>
+		</property>
+		<property name="concurrent">
+            <value>false</value>
+        </property>
+	</bean>
+	
+	<bean id="monitorRedoFile"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="scheduleService" />
+        </property>
+        <property name="targetMethod">
+            <value>monitorRedoFile</value>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+    </bean>
+    
+    <bean id="everyDayCleanJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="scheduleService" />
+        </property>
+        <property name="targetMethod">
+            <value>everyDayTask</value>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+    </bean>
+    
+    <bean id="nextHourLoadJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="scheduleService" />
+        </property>
+        <property name="targetMethod">
+            <value>loadNextHour</value>
+        </property>
+        <property name="concurrent">
+            <value>true</value>
+        </property>
+    </bean>
+	
+
+	<!-- ======================== 调度触发器 ======================== -->
+	<!-- 和运营平台对账 -->
+	<bean id="sendToSlaveTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="sendToSlave"></property>
+		<!-- 每隔1s执行一次 -->
+		<property name="cronExpression" value="*/1 * * * * ?"></property>
+	</bean>
+	
+	<bean id="monitorRedoFileTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="monitorRedoFile"></property>
+        <!-- 每隔1s执行一次 -->
+        <property name="cronExpression" value="*/1 * * * * ?"></property>
+    </bean>
+    
+    <bean id="everyDayCleanJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="everyDayCleanJob"></property>
+        <!-- 每天凌晨三点 -->
+        <property name="cronExpression" value="0 20 3 * * ? *"></property>
+    </bean>
+    
+    <bean id="nextHourLoadJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="nextHourLoadJob"></property>
+        <!-- 每小时50分执行一次 -->
+        <property name="cronExpression" value="0 50 0/1 * * ? *"></property>
+    </bean>
+
+	
+	<!-- ======================== 调度工厂 ======================== -->
+	<bean id="SpringJobSchedulerFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+ 				<ref bean="sendToSlaveTrigger" />
+                <ref bean="monitorRedoFileTrigger" />
+                <ref bean="everyDayCleanJobTrigger" />
+                <ref bean="nextHourLoadJobTrigger" />
+			</list>
+		</property>
+	</bean>
+</beans>

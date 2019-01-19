@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <property name="LOG_FILE_ROOT" value="${LOG_PATH}/root/spring-root.log}"/>
+    <property name="LOG_FILE_DAO" value="${LOG_PATH}/failedSendMsg/faildMsg.log}"/>
+    <property name="LOG_FILE_STARTER" value="${LOG_PATH}/load/starter.log}"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+<property name="Msg_LOG_PATTERN" value="${FILE_LOG_PATTERN:-%d{yyyy-MM-dd HH:mm:ss.SSS} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+     
+     <appender name="TIME_FILE_ROOT"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOG_FILE_ROOT}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE_ROOT}.%d{yyyy-MM-dd}.%i</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>30MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+     </appender>
+     <appender name="TIME_FILE_DAO"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOG_FILE_DAO}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE_DAO}.%d{yyyy-MM-dd}.%i</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>30MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+     </appender>
+     <appender name="LOG_FILE_STARTER"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOG_FILE_STARTER}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE_STARTER}.%d{yyyy-MM-dd}.%i</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>30MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+     </appender>
+     
+         
+    <root level="info">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="TIME_FILE_ROOT" />
+     </root>
+     <logger name="failedMessage" additivity="false" level="INFO">
+     <appender-ref ref="CONSOLE" />
+        <appender-ref ref="TIME_FILE_DAO"/>
+     </logger>
+     <logger name="com.cmcc.mgr.init" additivity="false" level="INFO">
+     <appender-ref ref="CONSOLE" />
+        <appender-ref ref="LOG_FILE_STARTER"/>
+     </logger>
+     
+</configuration>

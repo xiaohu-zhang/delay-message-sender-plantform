@@ -1,0 +1,3 @@
+tickTime 设置为450
+因为zk默认有效客户端session在2-20 tickTime之间。设置为900ms~9000ms之间。
+zkClient设置为sessiontimeout为1s。则可以保证主备切换在1s内完成

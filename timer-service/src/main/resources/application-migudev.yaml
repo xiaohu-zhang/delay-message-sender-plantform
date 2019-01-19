@@ -1,0 +1,59 @@
+server: 
+  port: 7887
+spring: 
+    http: 
+    encoding: 
+    force: true
+    datasource:
+      url: jdbc:mysql://172.28.20.212:3306/migucurrency_dev?useUnicode=true&characterEncoding=UTF-8&connectTimeout=30000&socketTimeout=60000
+      username: root
+      password: m7iaofXZ
+      maxActive: 100
+      maxIdle: 30
+      maxWait: 500
+    profiles: migudev
+    jackson: 
+      date-format: "yyyyMMdd HH:mm:ss"
+management: 
+  security: 
+    enabled: false
+logging:  
+  level: 
+    root: info
+    com:
+      cmcc:
+        mgr:
+          biz: info 
+          dao: info
+          controller: info
+  path: /data/Timer/logs
+data: 
+  path: /data/Timer/logs
+threadPool: 
+  corePoolSize: 100
+  maximumPoolSize: 200
+  keepAliveTime: 30
+reloadBeforeSeconds: 7200
+failedRetryTimes: 3,3
+deFreezeUrl: http://172.28.20.204:8080/MiGuMgr/rs/service/com_sitech_acctmgr_inter_IUserSvc_timerDeFreeze
+redis:  
+  cluster:  
+    nodes:  
+      - 172.28.20.215:6380
+      - 172.28.20.215:6381
+      - 172.28.20.215:6382
+      - 172.28.20.215:6383
+      - 172.28.20.215:6384
+      - 172.28.20.215:6385
+  password: pPe+v85sO9c=
+redoFileSize: 524288000 ##redo文件多大滚动一次，这里设置的是500M
+registry.servers: 172.28.20.215:2181
+registry.root.path: /timerdev
+slave: 
+  server: 
+    port: 9960
+deploy: 
+  type: 1## 0表示单机集群 1 表示主备集群
+virtualIp: ##172.28.11.252
+monitorPath: 
+  /monitordev

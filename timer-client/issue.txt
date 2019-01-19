@@ -1,0 +1,15 @@
+1.	落盘采用queue的方式，异步落盘，用一个单一write线程，落盘，多个producer
+2.	写入落盘是同步落盘，可以开启一个一直打开的channel，只有根据时间和大小的时候，单独一个线程才更新这个打开的channel，缩减打开和关闭channel的时间
+3.	load方式是单线程，可以改成多线程load文件的不同部分，但是多部分交接的地方需要尤其注意，直接拆分成多个文件，多线程load
+4.	前端接入方式是http，可以采用tcp接入
+5.	主备方式，主需要按照file transfer的形式，将数据同步到从，用zookeeper来做主从的监控和切换
+6.	根据5的情况后，客户端可以做负载均衡，到不同的broker中进行请求，查找消息体和broker的关系可能需要到rediscluster中查询
+7.	文件写入和读取的方式可以采用mmp的方式，这样效率更好
+8.	hashwheeltimeout可以做成多个，提高单机timeout定时器吞吐量
+9.	做成消息中间件，引入redis集群，记录topic-message serverIp作为key，value
+10.	有哪些消息的接收端，需要使用zookeeper做订阅topic的记录和查询
+11.	redolog的读取采用多线程，一个线程先解析当前文件，后面线程组分别处理对应的任务
+12.	对于不同时间的延迟消息，将大于1h的消息存储在不同的文件夹内。这样每次map中只需要存储当前1h内的发送消息
+13.	记录下consumer的消费index，同时index文件也需要同步到slave端。推送数据的时候，要根据consumerIndex推送，load也需要从这里load而不是从scanlog中load。当主从切换的时候，根据index进行数据的load。这样保证不会缺少推送的数据。
+14. 推送和主从复制从磁盘获取改为从内存cache中获取，这里也可以考虑使用mmap
+15.	因掉电引起的异常文件检测。正常启动生成monitor.txt文件，当正常关闭时，删除monitor.txt。

@@ -1,0 +1,4 @@
+spring: 
+    profiles: 
+      active: migudev
+env: mig

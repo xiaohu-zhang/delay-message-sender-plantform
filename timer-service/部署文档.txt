@@ -1,0 +1,35 @@
+1. 将172.30.198.57 172.30.198.51 172.30.198.45 172.30.198.25 172.30.198.18
+五台机器依次关闭zookeeper。修改/e3base/zookeeper/conf/zoo.cfg文件，tickTime=450，minSessionTimeout=900。重启当前节点的zookeeper。
+2. 开通timer服务器和zookeeper服务器之间的端口联通。
+172.30.196.204 172.30.196.139两台服务器到以上5台zk服务器的9501端口通畅。
+3.	将204 139两台服务器部署tomcat，配置同172.30.196.114机器的tomcat配置，将对外port值设置为6180
+4.	将zk的日志进行清理,在zoo.cfg文件中，增加如下设置
+autopurge.purgeInterval=1
+autopurge.snapRetainCount=3
+
+
+开发等环境部署文档：
+1. 将pom <packaging>war</packaging> 修改为jar
+2. mvn clean install -Dmaven.test.skip=true 打包
+3. 打出的包删除target目录下的Timer.jar 将Timer.jar.original 重命名为Timer.jar
+引入方式：mvn install:install-file -Dfile=jar包的位置 -DgroupId=com.cmcc.virtualMoney -DartifactId=timer -Dversion=0.0.1 -Dpackaging=jar
+示例:mvn install:install-file -Dfile=./Timer.jar -DgroupId=com.cmcc.virtualMoney -DartifactId=timer -Dversion=0.0.1 -Dpackaging=jar
+4. 这样打出的包可以作为client端在使用的项目中引用，例如act
+5. 使用pom.xml中的配置为 <packaging>war</packaging> mvn clean install -Dmaven.test.skip=true 打出war包
+6. war包会读取webapps上级目录下的timerMq/config目录下的application.yaml和application-xx.yaml。xx选取和application.yaml配置有关
+7. 将Timer项目代码中的resource目录下application.yaml和application-xx.yaml拷贝到6的目录下。如果是主备配置，注意修改：
+data.path 和logging.path 两个路径，分别表示日志和数据存储的路径。主备节点在一台机器上的时候，节点之间配置的路径不能相同。以防数据和日志存储混乱
+8.	节点都启动成功后，使用
+http://127.0.0.1:7887/Timer/zkRegistry/registryCluster mediatype为：application/json
+post发送
+{
+    "ROOT": {
+        "BODY": {
+            "BUSI_INFO": {
+                "clusterInfo": "127.0.0.1:7887|127.0.0.1:7888||127.0.0.1:7889|127.0.0.1:7890"
+            }
+        }
+    }
+}
+类似如上例子。127.0.0.1:7887表示任意一台node节点的http端口和ip。clusterInfo内容如下：||区分不同的分区，分区内部有主备节点。|区分主备节点，|第一个为主，其他是备节点。
+9. timer需要部署zk。对应的配置项为：registry.servers。 
