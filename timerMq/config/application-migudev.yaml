@@ -6,8 +6,8 @@ spring:
     force: true
     datasource:
       url: jdbc:mysql://172.28.20.212:3306/migucurrency_dev?useUnicode=true&characterEncoding=UTF-8&connectTimeout=30000&socketTimeout=60000
-      username: root
-      password: m7iaofXZ
+      username: xxoo
+      password: xxoo
       maxActive: 100
       maxIdle: 30
       maxWait: 500
